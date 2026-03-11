@@ -2,21 +2,22 @@ package task_service
 
 import (
 	"context"
+	"log"
 	"task-service/internal/entity"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type TaskServiceRepo struct {
-	pool pgxpool.Pool
+	pool *pgxpool.Pool
 }
 
-func NewTaskServiceRepository(pool pgxpool.Pool) *TaskServiceRepo {
+func NewTaskServiceRepository(pool *pgxpool.Pool) *TaskServiceRepo {
 	return &TaskServiceRepo{pool: pool}
 }
 
 func (r *TaskServiceRepo) CreateTask(ctx context.Context, task entity.Task) error {
-	_, err := r.pool.Exec(ctx, "INSERT INTO tasks(task_uuid,user_uuid,title,description,status) VALUES $1, $2, $3,$4,$5", task.TaskUUID, task.UserUUID, task.Title, task.Description, task.Status)
+	_, err := r.pool.Exec(ctx, "INSERT INTO tasks(task_uuid,user_uuid,title,description,status) VALUES ($1, $2, $3, $4, $5)", task.TaskUUID, task.UserUUID, task.Title, task.Description, task.Status)
 	if err != nil {
 		return err
 	}
@@ -24,7 +25,7 @@ func (r *TaskServiceRepo) CreateTask(ctx context.Context, task entity.Task) erro
 }
 func (r *TaskServiceRepo) GetTask(ctx context.Context, taskUUID, userUUID string) (entity.Task, error) {
 	var task entity.Task
-	row := r.pool.QueryRow(ctx, "SELECT * FROM tasks WHERE task_uuid = $1 and user_uuid = $2", taskUUID, userUUID)
+	row := r.pool.QueryRow(ctx, "SELECT task_uuid, user_uuid, title, description, status FROM tasks WHERE task_uuid = $1 and user_uuid = $2", taskUUID, userUUID)
 	err := row.Scan(
 		&task.TaskUUID,
 		&task.UserUUID,
@@ -60,12 +61,15 @@ func (r *TaskServiceRepo) GetListOfTasks(ctx context.Context, userUUID string) (
 	defer rows.Close()
 	for rows.Next() {
 		var task entity.Task
-		rows.Scan(
+		err = rows.Scan(
 			&task.TaskUUID,
 			&task.UserUUID,
 			&task.Title,
 			&task.Description,
 			&task.Status)
+		if err != nil {
+			log.Printf("failde to scan %v", err)
+		}
 		tasks = append(tasks, task)
 	}
 	return tasks, nil

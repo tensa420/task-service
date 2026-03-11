@@ -1,11 +1,9 @@
 package task_service
 
-import "task-service/internal/repository"
-
 type TaskServiceUseCase struct {
-	repo repository.TaskServiceRepository
+	repo TaskServiceRepository
 }
 
-func NewTaskServiceUseCase(repo repository.TaskServiceRepository) *TaskServiceUseCase {
+func NewTaskServiceUseCase(repo TaskServiceRepository) *TaskServiceUseCase {
 	return &TaskServiceUseCase{repo: repo}
 }

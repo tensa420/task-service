@@ -9,7 +9,7 @@ import (
 )
 
 func (u *TaskServiceUseCase) DeleteTask(ctx context.Context, taskUUID string, userUUID string) error {
-	err := u.DeleteTask(ctx, taskUUID, userUUID)
+	err := u.repo.DeleteTask(ctx, taskUUID, userUUID)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return entity.ErrNotFound
