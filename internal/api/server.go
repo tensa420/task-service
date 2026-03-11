@@ -6,10 +6,10 @@ import (
 )
 
 type TaskServiceServer struct {
-	useCase usecase.TaskServiceTypes
+	useCase usecase.TaskServiceUsecase
 	task_service.UnimplementedTaskServiceServer
 }
 
-func NewTaskServiceServer(useCase usecase.TaskServiceTypes) *TaskServiceServer {
+func NewTaskServiceServer(useCase usecase.TaskServiceUsecase) *TaskServiceServer {
 	return &TaskServiceServer{useCase: useCase}
 }

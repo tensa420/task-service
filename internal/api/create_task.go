@@ -4,6 +4,8 @@ import (
 	"context"
 	"task-service/internal/entity"
 	"task-service/pkg/task_service"
+
+	"github.com/google/uuid"
 )
 
 func (s *TaskServiceServer) CreateTask(ctx context.Context, in *task_service.CreateTaskRequest) (*task_service.CreateTaskResponse, error) {
@@ -16,8 +18,7 @@ func (s *TaskServiceServer) CreateTask(ctx context.Context, in *task_service.Cre
 
 func convertProtoToEntity(task *task_service.Task) entity.Task {
 	return entity.Task{
-		TaskUUID:    task.TaskUUID,
-		UserUUID:    task.UserUUID,
+		UserUUID:    uuid.MustParse(task.UserUUID),
 		Description: task.Description,
 		Title:       task.Title,
 	}
