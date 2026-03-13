@@ -59,11 +59,11 @@ func (r *TaskRepo) GetListOfTasks(ctx context.Context, userUUID string) ([]entit
 	return tasks, nil
 }
 
-func (r *TaskRepo) SelectForUpdate(ctx context.Context, taskUUID string, fn func(tx *gorm.DB, task entity.Task) error) error {
+func (r *TaskRepo) SelectForUpdate(ctx context.Context, taskUUID, userUUID string, fn func(tx *gorm.DB, task entity.Task) error) error {
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		var task entity.Task
 		if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
-			Where("task_uuid = ?", taskUUID).
+			Where("task_uuid = ? AND user_uuid = ?", taskUUID, userUUID).
 			First(&task).Error; err != nil {
 			return err
 		}
