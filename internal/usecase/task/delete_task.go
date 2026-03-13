@@ -1,4 +1,4 @@
-package task_service
+package task
 
 import (
 	"context"
@@ -8,8 +8,8 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func (u *TaskServiceUseCase) FinishTask(ctx context.Context, taskUUID, userUUID string) error {
-	err := u.repo.FinishTask(ctx, taskUUID, userUUID)
+func (u *TaskServiceUseCase) DeleteTask(ctx context.Context, taskUUID string, userUUID string) error {
+	err := u.repo.DeleteTask(ctx, taskUUID, userUUID)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return entity.ErrNotFound

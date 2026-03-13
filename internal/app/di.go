@@ -5,19 +5,19 @@ import (
 	"log"
 	"os"
 	"task-service/internal/api"
-	task_service2 "task-service/internal/repository/task_service"
-	"task-service/internal/usecase/task_service"
+	task_service2 "task-service/internal/repository/task"
+	"task-service/internal/usecase/task"
 
-	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/joho/godotenv"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 type diContainer struct {
 	server     *api.TaskServiceServer
 	useCase    api.TaskServiceUsecase
-	repository task_service.TaskServiceRepository
+	repository task.TaskServiceRepository
 
-	pool *pgxpool.Pool
+	db *gorm.DB
 }
 
 func NewdiContainer() *diContainer {
@@ -32,31 +32,23 @@ func (d *diContainer) Server(ctx context.Context) *api.TaskServiceServer {
 
 func (d *diContainer) UseCase(ctx context.Context) api.TaskServiceUsecase {
 	if d.useCase == nil {
-		d.useCase = task_service.NewTaskServiceUseCase(d.Repository(ctx))
+		d.useCase = task.NewTaskServiceUseCase(d.Repository(ctx))
 	}
 	return d.useCase
 }
-func (d *diContainer) Repository(ctx context.Context) task_service.TaskServiceRepository {
+func (d *diContainer) Repository(ctx context.Context) task.TaskServiceRepository {
 	if d.repository == nil {
-		d.repository = task_service2.NewTaskServiceRepository(d.Pool(ctx))
+		d.repository = task_service2.NewTaskServiceRepository(d.DB(ctx))
 	}
 	return d.repository
 }
-func (d *diContainer) Pool(ctx context.Context) *pgxpool.Pool {
-	if d.pool == nil {
-		err := godotenv.Load(".env")
+func (d *diContainer) DB(ctx context.Context) *gorm.DB {
+	if d.db == nil {
+		db, err := gorm.Open(postgres.Open(os.Getenv("DB_URI")), &gorm.Config{})
 		if err != nil {
-			log.Fatalf("Error loading .env file")
+			log.Fatalf("failed to connect to db: %v", err)
 		}
-		pool, err := pgxpool.New(ctx, os.Getenv("DB_URI"))
-		if err != nil {
-			log.Fatalf("Failed to close connection with db: %v", err)
-		}
-		if err = pool.Ping(ctx); err != nil {
-			log.Fatalf("Failed to ping db: %v", err)
-		}
-		return pool
+		d.db = db
 	}
-
-	return d.pool
+	return d.db
 }

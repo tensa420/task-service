@@ -3,7 +3,7 @@ syntax = "proto3";
 package pet_api;
 import "google/protobuf/empty.proto";
 
-option go_package = "pkg/task_service";
+option go_package = "pkg/task";
 
 
 service TaskService {
