@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 	"task-service/internal/entity/events"
-	"task-service/pkg/events"
+	protoEvents "task-service/pkg/events"
 
 	"github.com/IBM/sarama"
 	"google.golang.org/protobuf/proto"
@@ -29,8 +29,8 @@ func (p *LogsProducer) SendMessage(ctx context.Context, taskLog events.TaskLog) 
 	return nil
 }
 
-func convertEntityTaskLogToProto(log events.TaskLog) events.TaskLog {
-	return events.TaskLog{
+func convertEntityTaskLogToProto(log events.TaskLog) protoEvents.TaskLog {
+	return protoEvents.TaskLog{
 		TaskUUID:  log.TaskUUID.String(),
 		UserUUID:  log.UserUUID.String(),
 		LogType:   convertEntityLogTypeToProto(log.Type),
@@ -38,13 +38,13 @@ func convertEntityTaskLogToProto(log events.TaskLog) events.TaskLog {
 		LogUUID:   log.LogUUID.String(),
 	}
 }
-func convertEntityLogTypeToProto(logType events.LogType) events.LogType {
+func convertEntityLogTypeToProto(logType events.LogType) protoEvents.LogType {
 	switch logType {
 	case events.LogTypeFinish:
-		return events.LogType_LOG_TYPE_FINISH
+		return protoEvents.LogType_LOG_TYPE_FINISH
 	case events.LogTypeCreate:
-		return events.LogType_LOG_TYPE_CREATE
+		return protoEvents.LogType_LOG_TYPE_CREATE
 	default:
-		return events.LogType_LOG_TYPE_DELETE
+		return protoEvents.LogType_LOG_TYPE_DELETE
 	}
 }

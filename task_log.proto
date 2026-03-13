@@ -1,0 +1,20 @@
+
+syntax = "proto3";
+
+package task_service;
+import "google/protobuf/timestamp.proto";
+option go_package = "pkg/task";
+
+message Tasklog {
+  string LogUUID = 1;
+  string UserUUID = 2;
+  string TaskUUID = 3;
+  google.protobuf.Timestamp Created_at = 4;
+  LogType LogType = 5;
+}
+
+enum LogType {
+  LOG_TYPE_CREATE = 0;
+  LOG_TYPE_FINISH = 1;
+  LOG_TYPE_DELETE = 2;
+}
