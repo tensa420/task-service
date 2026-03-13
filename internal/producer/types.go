@@ -1,7 +1,10 @@
 package producer
 
-import "context"
+import (
+	"context"
+	"task-service/internal/entity/events"
+)
 
 type LogProducer interface {
-	SendMessage(ctx context.Context, topic string, userUUID, msg string) error
+	SendMessage(ctx context.Context, taskLog events.TaskLog) error
 }

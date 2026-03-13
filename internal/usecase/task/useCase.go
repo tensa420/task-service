@@ -2,11 +2,11 @@ package task
 
 import "task-service/internal/producer"
 
-type TaskServiceUseCase struct {
-	repo        TaskServiceRepository
+type TaskUseCase struct {
+	repo        TaskRepository
 	logproducer producer.LogProducer
 }
 
-func NewTaskServiceUseCase(repo TaskServiceRepository) *TaskServiceUseCase {
-	return &TaskServiceUseCase{repo: repo}
+func NewTaskServiceUseCase(repo TaskRepository) *TaskUseCase {
+	return &TaskUseCase{repo: repo}
 }

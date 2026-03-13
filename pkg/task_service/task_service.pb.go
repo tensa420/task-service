@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v6.32.1
-// source: task.proto
+// source: events.proto
 
 package task_service
 
@@ -70,7 +70,7 @@ func (TaskStatus) EnumDescriptor() ([]byte, []int) {
 
 type CreateTaskRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Task          *Task                  `protobuf:"bytes,1,opt,name=task,proto3" json:"task,omitempty"`
+	Task          *Task                  `protobuf:"bytes,1,opt,name=events,proto3" json:"events,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -314,7 +314,7 @@ func (x *GetTaskRequest) GetUserUUID() string {
 
 type GetTaskResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Task          *Task                  `protobuf:"bytes,1,opt,name=task,proto3" json:"task,omitempty"`
+	Task          *Task                  `protobuf:"bytes,1,opt,name=events,proto3" json:"events,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -592,8 +592,8 @@ var file_task_service_proto_goTypes = []any{
 	(*emptypb.Empty)(nil),          // 10: google.protobuf.Empty
 }
 var file_task_service_proto_depIdxs = []int32{
-	9,  // 0: pet_api.CreateTaskRequest.task:type_name -> pet_api.Task
-	9,  // 1: pet_api.GetTaskResponse.task:type_name -> pet_api.Task
+	9,  // 0: pet_api.CreateTaskRequest.events:type_name -> pet_api.Task
+	9,  // 1: pet_api.GetTaskResponse.events:type_name -> pet_api.Task
 	9,  // 2: pet_api.GetListOfTasksResponse.tasks:type_name -> pet_api.Task
 	0,  // 3: pet_api.Task.status:type_name -> pet_api.TaskStatus
 	1,  // 4: pet_api.TaskService.CreateTask:input_type -> pet_api.CreateTaskRequest

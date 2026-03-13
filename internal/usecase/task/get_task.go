@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (u *TaskServiceUseCase) GetTask(ctx context.Context, taskUUID, userUUID string) (entity.Task, error) {
+func (u *TaskUseCase) GetTask(ctx context.Context, taskUUID, userUUID string) (entity.Task, error) {
 	task, err := u.repo.GetTask(ctx, taskUUID, userUUID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -19,8 +19,8 @@ func (u *TaskServiceUseCase) GetTask(ctx context.Context, taskUUID, userUUID str
 		return entity.Task{}, err
 	}
 
-	producerMsg := fmt.Sprintf("User %v got task %v", task.UserUUID, task.TaskUUID)
-	err = u.logproducer.SendMessage(ctx, os.Getenv("KAFKA_TOPIC_LOGS"), userUUID, producerMsg)
+	producerMsg := fmt.Sprintf("User %v got events %v", task.UserUUID, task.TaskUUID)
+	err = u.logproducer.SendMessage(ctx, userUUID, producerMsg)
 	if err != nil {
 		return entity.Task{}, err
 	}

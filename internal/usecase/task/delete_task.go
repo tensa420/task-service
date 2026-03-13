@@ -3,27 +3,35 @@ package task
 import (
 	"context"
 	"errors"
-	"fmt"
-	"os"
 	"task-service/internal/entity"
+	"task-service/internal/entity/events"
+	"time"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
-func (u *TaskServiceUseCase) DeleteTask(ctx context.Context, taskUUID string, userUUID string) error {
-	err := u.repo.DeleteTask(ctx, taskUUID, userUUID)
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return entity.ErrNotFound
+func (u *TaskUseCase) DeleteTask(ctx context.Context, taskUUID string, userUUID string) error {
+	taskLog := events.TaskLog{
+		LogUUID:    uuid.New(),
+		UserUUID:   uuid.MustParse(userUUID),
+		TaskUUID:   uuid.MustParse(taskUUID),
+		Created_at: time.Now(),
+		Type:       events.LogTypeDelete,
+	}
+	err := u.repo.SelectForUpdate(ctx, taskUUID, func(tx *gorm.DB, task entity.Task) error {
+		if err := tx.Delete(&task).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return entity.ErrNotFound
+			}
 		}
-		return err
-	}
-	producerMsg := fmt.Sprintf("User %v deleted task %v", userUUID, taskUUID)
-
-	err = u.logproducer.SendMessage(ctx, os.Getenv("KAFKA_TOPIC_LOGS"), userUUID, producerMsg)
+		if err := u.logproducer.SendMessage(ctx, taskLog); err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return err
 	}
-
 	return nil
 }

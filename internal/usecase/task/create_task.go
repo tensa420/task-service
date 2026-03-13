@@ -3,15 +3,15 @@ package task
 import (
 	"context"
 	"errors"
-	"fmt"
-	"os"
 	"task-service/internal/entity"
+	"task-service/internal/entity/events"
+	"time"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
-func (u *TaskServiceUseCase) CreateTask(ctx context.Context, task entity.Task) (string, error) {
+func (u *TaskUseCase) CreateTask(ctx context.Context, task entity.Task) (string, error) {
 	task.TaskUUID = uuid.New()
 	task.Status = entity.TaskStatusNew
 
@@ -22,8 +22,15 @@ func (u *TaskServiceUseCase) CreateTask(ctx context.Context, task entity.Task) (
 		}
 	}
 
-	producerMsg := fmt.Sprintf("User %v created task %v", task.UserUUID, task.TaskUUID)
-	err = u.logproducer.SendMessage(ctx, os.Getenv("KAFKA_TOPIC_LOGS"), task.UserUUID.String(), producerMsg)
+	taskLog := events.TaskLog{
+		TaskUUID:   task.TaskUUID,
+		UserUUID:   task.UserUUID,
+		Created_at: time.Now(),
+		LogUUID:    uuid.New(),
+		Type:       events.LogTypeCreate,
+	}
+	
+	err = u.logproducer.SendMessage(ctx, taskLog)
 	if err != nil {
 		return "", err
 	}
