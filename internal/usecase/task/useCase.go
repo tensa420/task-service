@@ -1,7 +1,10 @@
 package task
 
+import "task-service/internal/producer"
+
 type TaskServiceUseCase struct {
-	repo TaskServiceRepository
+	repo        TaskServiceRepository
+	logproducer producer.LogProducer
 }
 
 func NewTaskServiceUseCase(repo TaskServiceRepository) *TaskServiceUseCase {
