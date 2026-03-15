@@ -13,5 +13,5 @@ type TaskRepository interface {
 	FinishTask(ctx context.Context, taskUUID, userUUID string) error
 	GetListOfTasks(ctx context.Context, userUUID string) ([]entity.Task, error)
 	GetTask(ctx context.Context, taskUUID, userUUID string) (entity.Task, error)
-	SelectForUpdate(ctx context.Context, taskUUID string, fn func(tx *gorm.DB, task entity.Task) error) error
+	SelectForUpdate(ctx context.Context, taskUUID string, userUUID string, fn func(tx *gorm.DB, task entity.Task) error) error
 }

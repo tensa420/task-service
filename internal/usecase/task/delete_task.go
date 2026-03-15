@@ -19,7 +19,7 @@ func (u *TaskUseCase) DeleteTask(ctx context.Context, taskUUID string, userUUID 
 		Created_at: time.Now(),
 		Type:       events.LogTypeDelete,
 	}
-	err := u.repo.SelectForUpdate(ctx, taskUUID, func(tx *gorm.DB, task entity.Task) error {
+	err := u.repo.SelectForUpdate(ctx, taskUUID, userUUID, func(tx *gorm.DB, task entity.Task) error {
 		if err := tx.Delete(&task).Error; err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return entity.ErrNotFound

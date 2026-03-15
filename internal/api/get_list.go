@@ -22,7 +22,7 @@ func convertEntitySliceOfTasksToProto(tasks []entity.Task) []*task_service.Task 
 			Description: task.Description,
 			Status:      convertTaskStatus(task.Status),
 			UserUUID:    task.UserUUID.String(),
-			TaskUUID:    task.UserUUID.String(),
+			TaskUUID:    task.TaskUUID.String(),
 		}
 		protoTasks = append(protoTasks, protoTask)
 	}

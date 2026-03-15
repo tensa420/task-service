@@ -18,7 +18,7 @@ func (u *TaskUseCase) FinishTask(ctx context.Context, taskUUID, userUUID string)
 		LogUUID:    uuid.New(),
 		Type:       events.LogTypeFinish,
 	}
-	err := u.repo.SelectForUpdate(ctx, taskUUID, func(tx *gorm.DB, task entity.Task) error {
+	err := u.repo.SelectForUpdate(ctx, taskUUID, userUUID, func(tx *gorm.DB, task entity.Task) error {
 		if err := tx.Model(&task).Update("status", entity.TaskStatusFinished).Error; err != nil {
 			return err
 		}
